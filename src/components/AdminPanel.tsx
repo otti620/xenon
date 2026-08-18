@@ -34,6 +34,7 @@ import {
   Check,
   BarChart3,
   Shield,
+  ShieldCheck,
   Menu,
   ChevronRight,
 } from 'lucide-react';
