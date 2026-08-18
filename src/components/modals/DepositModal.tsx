@@ -61,9 +61,9 @@ export const DepositModal: React.FC = () => {
   };
 
   const bankDetails = {
-    bankName: 'Moniepoint Microfinance Bank',
-    accountNumber: '8140928312',
-    accountName: 'Legacy Growth LTD',
+    bankName: 'Prospa',
+    accountNumber: '0120123957',
+    accountName: 'Leviathan Hypermarket',
   };
 
   return (
