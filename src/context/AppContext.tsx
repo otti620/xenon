@@ -369,7 +369,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     try {
-      const res = await apiWithdraw(amount);
+      const res = await apiWithdraw(amount, bankAccount);
       if (typeof res.balance === 'number') setBalance(res.balance);
       if (res.transactions) setTransactions(res.transactions);
       await refreshUserData();

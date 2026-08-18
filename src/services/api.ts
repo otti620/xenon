@@ -348,11 +348,16 @@ export const apiDeposit = async (amount: number, reference: string, senderName?:
   };
 };
 
-export const apiWithdraw = async (amount: number) => {
+export const apiWithdraw = async (amount: number, bankAccountInput?: BankAccount) => {
   const phone = getCurrentPhone();
   if (!phone) throw new Error('Not authenticated');
   const user: any = await getDocFromFirestore('users', phone);
   if (!user) throw new Error('User not found');
+
+  const bankAccount = bankAccountInput || user.bankAccount || user.bank_account;
+  if (!bankAccount || !bankAccount.accountNumber || !bankAccount.bankName) {
+    throw new Error('Please link your bank account details before requesting a withdrawal.');
+  }
 
   const allInvestments = await fetchFromFirestore('investments');
   const userInvestments = allInvestments.filter((inv: any) => inv.phone === phone);
@@ -366,14 +371,20 @@ export const apiWithdraw = async (amount: number) => {
   }
   const newBalance = balance - amount;
   user.balance = newBalance;
+  user.bankAccount = bankAccount;
   await syncUserToFirestore(user, newBalance);
 
   const wdId = 'wd_' + Date.now();
   const tx = {
     id: wdId,
     phone,
+    userId: phone,
     type: 'withdrawal',
     amount,
+    bankName: bankAccount.bankName,
+    accountNumber: bankAccount.accountNumber,
+    accountName: bankAccount.accountName || 'User',
+    bankAccount: bankAccount,
     status: 'pending',
     createdAt: new Date().toISOString()
   };
@@ -756,7 +767,25 @@ export const apiAdminAdjustBalance = async (phone: string, amount: number, mode:
 
 export const apiAdminGetWithdrawals = async () => {
   const withdrawals = await fetchFromFirestore('withdrawals');
-  return { withdrawals };
+  const users = await fetchFromFirestore('users');
+
+  const enriched = withdrawals.map((w: any) => {
+    const user = users.find((u: any) => u.phone === w.phone || u.id === w.userId);
+    const bank = w.bankAccount || (user ? user.bankAccount : null) || (w.bankName || w.accountNumber ? {
+      bankName: w.bankName || 'Bank Account',
+      accountNumber: w.accountNumber || 'N/A',
+      accountName: w.accountName || user?.name || 'User'
+    } : null);
+    return {
+      ...w,
+      bankAccount: bank,
+      bankName: bank?.bankName || w.bankName,
+      accountNumber: bank?.accountNumber || w.accountNumber,
+      accountName: bank?.accountName || w.accountName
+    };
+  });
+
+  return { withdrawals: enriched };
 };
 
 export const apiAdminWithdrawalAction = async (userPhone: string, txId: string, action: 'approve' | 'reject') => {
