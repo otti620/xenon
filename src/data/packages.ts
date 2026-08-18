@@ -133,6 +133,6 @@ export const SYSTEM_INFO = {
   withdrawalHours: '9am - 9pm Daily',
   signUpBonus: 600,
   dailySignInBonus: 120,
-  telegramGroupUrl: 'https://t.me/nexora5674',
-  telegramChannelUrl: 'https://t.me/nexora5674',
+  telegramGroupUrl: 'https://t.me/+rc6Co9C6MVliNTNk',
+  telegramChannelUrl: 'https://t.me/+rc6Co9C6MVliNTNk',
 };
