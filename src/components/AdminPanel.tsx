@@ -756,10 +756,10 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     key={item.id}
                     className="bg-white rounded-2xl p-4 border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs"
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-gray-900">₦{Number(item.amount || 0).toLocaleString()}</span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-base font-black text-gray-900">₦{Number(item.amount || 0).toLocaleString()}</span>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase ${
                           ['completed', 'approved'].includes((item.status || '').toLowerCase()) ? 'bg-emerald-100 text-emerald-700' :
                           ['pending', 'processing'].includes((item.status || '').toLowerCase()) ? 'bg-amber-100 text-amber-800' :
                           'bg-red-100 text-red-700'
@@ -768,15 +768,23 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         </span>
                       </div>
                       <div className="text-xs text-gray-500 font-mono">
-                        User: <strong className="text-purple-600">{item.phone || item.userId || 'User'}</strong> | Ref: {item.reference || item.id}
+                        User: <strong className="text-purple-600 font-bold">{item.phone || item.userId || 'User'}</strong> &bull; Ref: <span className="text-gray-700 font-bold">{item.reference || item.id}</span>
                       </div>
-                      {(item.senderName || item.senderBank) && (
-                        <div className="text-xs bg-purple-50 text-purple-950 font-semibold px-2.5 py-1 rounded-lg border border-purple-100 inline-block">
-                          Payer: <span className="font-bold text-purple-700">{item.senderName || 'Not specified'}</span> &bull; Bank: <span className="font-bold text-purple-700">{item.senderBank || 'Not specified'}</span>
+                      
+                      {/* Payer Sender Details & Proof Card */}
+                      <div className="bg-purple-50/90 p-3 rounded-2xl border border-purple-200/80 text-xs text-purple-950 space-y-1">
+                        <div className="font-extrabold text-purple-900 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                          <ShieldCheck className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                          <span>Payer Proof & Bank Transfer Sender Details</span>
                         </div>
-                      )}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+                          <div>Sender Account Name: <strong className="text-purple-900 font-extrabold">{item.senderName || item.accountName || 'Not specified'}</strong></div>
+                          <div>Sender Bank: <strong className="text-purple-900 font-extrabold">{item.senderBank || item.bankName || 'Not specified'}</strong></div>
+                        </div>
+                      </div>
+
                       <div className="text-[11px] text-gray-400">
-                        {new Date(item.createdAt || Date.now()).toLocaleString()}
+                        Submitted On: {new Date(item.createdAt || Date.now()).toLocaleString()}
                       </div>
                     </div>
 
@@ -855,9 +863,21 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     key={item.id}
                     className="bg-white rounded-2xl p-4 border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs"
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-gray-900">₦{Number(item.amount || 0).toLocaleString()}</span>
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-xs text-gray-500 font-bold">Gross Requested:</span>
+                          <span className="text-sm font-black text-gray-400 line-through">₦{Number(item.amount || 0).toLocaleString()}</span>
+                        </div>
+
+                        {/* Automatic 15% Net Payout Calculation */}
+                        <div className="bg-emerald-100 text-emerald-950 px-3 py-1 rounded-xl border border-emerald-300 flex items-center gap-1.5 shadow-xs">
+                          <span className="text-[10px] font-extrabold uppercase text-emerald-800">Net Payout to Bank (After 15% Fee):</span>
+                          <span className="text-base font-black text-emerald-700">
+                            ₦{Math.max(0, Number(item.amount || 0) - Math.round(Number(item.amount || 0) * 0.15)).toLocaleString()}
+                          </span>
+                        </div>
+
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
                           ['completed', 'approved'].includes((item.status || '').toLowerCase()) ? 'bg-emerald-100 text-emerald-700' :
                           ['pending', 'processing'].includes((item.status || '').toLowerCase()) ? 'bg-amber-100 text-amber-800' :
@@ -866,16 +886,25 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                           {item.status}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-500 font-mono">
-                        User: <strong className="text-purple-600">{item.phone || item.userId || 'User'}</strong>
+
+                      <div className="text-xs text-gray-600 font-mono flex items-center gap-3 flex-wrap">
+                        <span>User: <strong className="text-purple-600 font-bold">{item.phone || item.userId || 'User'}</strong></span>
+                        <span>15% Service Fee: <strong className="text-pink-600 font-bold">-₦{Math.round(Number(item.amount || 0) * 0.15).toLocaleString()}</strong></span>
                       </div>
-                      {item.bankAccount && (
-                        <div className="text-xs text-gray-600 font-mono bg-gray-50 p-2 rounded-xl border border-gray-100">
-                          {item.bankAccount.bankName} | {item.bankAccount.accountNumber} ({item.bankAccount.accountName})
+
+                      {item.bankAccount ? (
+                        <div className="text-xs text-purple-950 font-mono bg-purple-50/80 p-2.5 rounded-xl border border-purple-200/80 space-y-0.5">
+                          <div className="font-extrabold text-purple-900 text-[11px] uppercase tracking-wide">Linked Bank Account for Payout:</div>
+                          <div>Bank: <strong className="text-purple-900">{item.bankAccount.bankName}</strong> | Account No: <strong className="text-purple-700 text-sm font-black">{item.bankAccount.accountNumber}</strong> ({item.bankAccount.accountName})</div>
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-red-600 font-bold bg-red-50 p-2 rounded-xl border border-red-100">
+                          ⚠ Warning: No linked bank account details attached to request
                         </div>
                       )}
+
                       <div className="text-[11px] text-gray-400">
-                        {new Date(item.createdAt || Date.now()).toLocaleString()}
+                        Requested On: {new Date(item.createdAt || Date.now()).toLocaleString()}
                       </div>
                     </div>
 
