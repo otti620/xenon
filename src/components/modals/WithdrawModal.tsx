@@ -22,7 +22,7 @@ export const WithdrawModal: React.FC = () => {
 
   if (!withdrawModalOpen) return null;
 
-  const hasPackage = Boolean(investments && investments.some((inv) => inv.status === 'active' || !inv.status));
+  const hasPackage = Boolean(investments && investments.length > 0);
   const meetsRequirements = hasPackage;
 
   const handleWithdraw = async (e: React.FormEvent) => {
@@ -32,7 +32,7 @@ export const WithdrawModal: React.FC = () => {
     if (!meetsRequirements) {
       setFeedback({
         success: false,
-        message: 'Withdrawal restricted: You must hold an active product investment package to request a withdrawal.',
+        message: 'Withdrawal restricted: You must hold a product investment package to request a withdrawal.',
       });
       return;
     }
