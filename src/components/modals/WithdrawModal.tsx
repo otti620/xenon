@@ -22,18 +22,17 @@ export const WithdrawModal: React.FC = () => {
 
   if (!withdrawModalOpen) return null;
 
-  const hasDeposit = transactions && transactions.some((t) => ['deposit', 'Deposit', 'admin_credit', 'reward', 'referral_bonus', 'gift_code'].includes(t.type));
-  const hasPackage = investments && investments.length > 0;
-  const meetsRequirements = Boolean((hasDeposit || balance > 0) && (hasPackage || balance >= SYSTEM_INFO.minWithdrawal));
+  const hasPackage = Boolean(investments && investments.some((inv) => inv.status === 'active' || !inv.status));
+  const meetsRequirements = hasPackage;
 
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     setFeedback(null);
 
-    if (!meetsRequirements && balance < SYSTEM_INFO.minWithdrawal) {
+    if (!meetsRequirements) {
       setFeedback({
         success: false,
-        message: 'Withdrawal restricted: Minimum withdrawal balance requirement not met.',
+        message: 'Withdrawal restricted: You must hold an active product investment package to request a withdrawal.',
       });
       return;
     }

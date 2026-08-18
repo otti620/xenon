@@ -360,6 +360,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { success: false, message: 'Please link your bank account first' };
     }
 
+    const hasActiveProduct = investments && investments.some(inv => inv.status === 'active' || !inv.status);
+    if (!hasActiveProduct) {
+      return { 
+        success: false, 
+        message: 'Withdrawal restricted: You must hold an active product investment package to request a withdrawal.' 
+      };
+    }
+
     try {
       const res = await apiWithdraw(amount);
       if (typeof res.balance === 'number') setBalance(res.balance);

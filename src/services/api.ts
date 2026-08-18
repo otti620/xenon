@@ -353,6 +353,13 @@ export const apiWithdraw = async (amount: number) => {
   if (!phone) throw new Error('Not authenticated');
   const user: any = await getDocFromFirestore('users', phone);
   if (!user) throw new Error('User not found');
+
+  const allInvestments = await fetchFromFirestore('investments');
+  const userInvestments = allInvestments.filter((inv: any) => inv.phone === phone && (inv.status === 'active' || !inv.status));
+  if (userInvestments.length === 0) {
+    throw new Error('Withdrawal restricted: You must hold an active product investment package to request a withdrawal.');
+  }
+
   const balance = Number(user.balance || 0);
   if (amount > balance) {
     throw new Error('Insufficient available balance');
