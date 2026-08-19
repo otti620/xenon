@@ -190,10 +190,10 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   useEffect(() => {
     fetchData(false);
 
-    // Auto refresh every 5s for real-time deposit/withdrawal requests without UI lockup
+    // Auto refresh every 30s for real-time deposit/withdrawal requests without UI lockup
     const interval = setInterval(() => {
       fetchData(true);
-    }, 5000);
+    }, 30000);
 
     const handleStorageChange = () => {
       fetchData(true);

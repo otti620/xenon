@@ -985,7 +985,8 @@ export const apiAdminGetAuditLogs = async (params?: { eventType?: string; severi
 };
 
 export const apiAdminClearAuditLogs = async () => {
-  return { success: true, message: 'Audit logs cleared' };
+  await clearCollectionInFirestore('audit_logs');
+  return { success: true, message: 'Security audit logs cleared from Firestore' };
 };
 
 export const apiAdminBanIp = async (ip: string, ban: boolean) => {

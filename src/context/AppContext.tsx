@@ -192,7 +192,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const interval = setInterval(() => {
       refreshUserData();
       fetchSystemConfig();
-    }, 8000);
+    }, 30000);
 
     return () => {
       clearInterval(interval);
