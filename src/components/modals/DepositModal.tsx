@@ -89,6 +89,18 @@ export const DepositModal: React.FC = () => {
 
       {/* Full Screen Body */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+        {SYSTEM_INFO.depositsPaused && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3 text-amber-900 shadow-xs">
+            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <div className="font-extrabold text-sm text-amber-950">Deposits Temporarily Paused</div>
+              <div className="text-xs text-amber-800 font-medium leading-relaxed">
+                Deposit services are currently paused by administration. Please check back later.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* STEP 1: AMOUNT SELECTION */}
         {step === 'amount' && (
           <div className="space-y-5">
@@ -128,11 +140,11 @@ export const DepositModal: React.FC = () => {
             </div>
 
             <button
-              disabled={amount < SYSTEM_INFO.minDeposit}
+              disabled={SYSTEM_INFO.depositsPaused || amount < SYSTEM_INFO.minDeposit}
               onClick={() => setStep('bank')}
               className="w-full mt-6 bg-gradient-to-r from-[#ea2cb6] to-[#7b24f2] text-white font-extrabold py-4 rounded-full shadow-lg shadow-purple-500/25 active:scale-98 disabled:opacity-50 transition-all text-sm flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Proceed to Payment</span>
+              <span>{SYSTEM_INFO.depositsPaused ? 'Deposits Currently Paused' : 'Proceed to Payment'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -289,11 +301,11 @@ export const DepositModal: React.FC = () => {
                 Back
               </button>
               <button
-                disabled={!senderName.trim() || !senderBank.trim() || loading}
+                disabled={SYSTEM_INFO.depositsPaused || !senderName.trim() || !senderBank.trim() || loading}
                 onClick={handleSubmitDeposit}
                 className="flex-2 w-full bg-gradient-to-r from-[#ea2cb6] to-[#7b24f2] text-white font-extrabold py-3.5 rounded-full shadow-lg shadow-purple-500/20 text-xs disabled:opacity-50 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer hover:opacity-95"
               >
-                {loading ? 'Submitting Details...' : 'Submit Payment Details'}
+                {SYSTEM_INFO.depositsPaused ? 'Deposits Currently Paused' : loading ? 'Submitting Details...' : 'Submit Payment Details'}
               </button>
             </div>
           </div>

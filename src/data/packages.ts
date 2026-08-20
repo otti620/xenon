@@ -135,4 +135,5 @@ export const SYSTEM_INFO = {
   dailySignInBonus: 120,
   telegramGroupUrl: 'https://t.me/+rc6Co9C6MVliNTNk',
   telegramChannelUrl: 'https://t.me/+rc6Co9C6MVliNTNk',
+  depositsPaused: true,
 };

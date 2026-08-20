@@ -317,6 +317,9 @@ export const apiClaimDailySignIn = async () => {
 };
 
 export const apiDeposit = async (amount: number, reference: string, senderName?: string, senderBank?: string, proofImage?: string) => {
+  if (SYSTEM_INFO.depositsPaused) {
+    throw new Error('Deposits are currently paused by administration. Please check back later.');
+  }
   const phone = getCurrentPhone();
   if (!phone) throw new Error('Not authenticated');
   const user: any = await getDocFromFirestore('users', phone);
