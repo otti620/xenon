@@ -61,9 +61,9 @@ export const DepositModal: React.FC = () => {
   };
 
   const bankDetails = {
-    bankName: 'Kuda Bank',
-    accountNumber: '3004023147',
-    accountName: 'Titan Digital Systems',
+    bankName: 'Moniepoint',
+    accountNumber: '6919197043',
+    accountName: 'TIT-RSRVD',
   };
 
   return (
