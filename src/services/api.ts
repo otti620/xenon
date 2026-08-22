@@ -730,15 +730,35 @@ export const apiAdminGetStats = async () => {
 
 export const apiAdminGetUsers = async () => {
   const users = await fetchFromFirestore('users');
+  const investments = await fetchFromFirestore('investments');
+
   return {
-    users: users.map((u: any) => ({
-      phone: u.phone,
-      email: u.email,
-      balance: u.balance || 0,
-      vipLevel: u.vipLevel || 0,
-      isFrozen: u.isFrozen || false,
-      createdAt: u.createdAt || new Date().toISOString(),
-    }))
+    users: users.map((u: any) => {
+      let code = u.invitationCode || u.invitation_code || u.referralCode || u.referral_code;
+      if (!code && u.phone) {
+        code = 'XENO' + String(u.phone).replace(/\D/g, '').slice(-4);
+      }
+      const userInvs = investments.filter((i: any) => i.phone === u.phone);
+
+      return {
+        ...u,
+        id: u.id || u.phone,
+        phone: u.phone,
+        name: u.name || u.email?.split('@')[0] || `User ${String(u.phone).slice(-4)}`,
+        email: u.email || '',
+        balance: u.balance || 0,
+        vipLevel: u.vipLevel || 0,
+        isFrozen: Boolean(u.isFrozen || u.frozen),
+        invitationCode: code || 'XENO0000',
+        referralCode: code || 'XENO0000',
+        invitation_code: code || 'XENO0000',
+        referredBy: u.referredBy || '',
+        bankAccount: u.bankAccount || null,
+        role: u.role || 'user',
+        investmentsCount: userInvs.length,
+        createdAt: u.createdAt || new Date().toISOString(),
+      };
+    })
   };
 };
 
