@@ -37,6 +37,7 @@ import {
   ShieldCheck,
   Menu,
   ChevronRight,
+  Link2,
 } from 'lucide-react';
 import {
   apiAdminGetStats,
@@ -986,9 +987,9 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </div>
 
                     <div className="text-xs text-gray-500 flex items-center gap-3 flex-wrap">
-                      <span>Code: <strong className="text-purple-600 font-mono">{u.invitationCode}</strong></span>
+                      <span>Ref Code: <strong className="text-purple-600 font-mono font-bold">{u.invitationCode || u.referralCode || u.phone}</strong></span>
                       <span>•</span>
-                      <span>Investments: <strong className="text-gray-900">{u.investmentsCount || 0}</strong></span>
+                      <span>Investments: <strong className="text-gray-900 font-bold">{u.investmentsCount || 0}</strong></span>
                       <span>•</span>
                       <span>Registered: {new Date(u.registeredAt || Date.now()).toLocaleDateString()}</span>
                     </div>
@@ -1000,6 +1001,35 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     ) : (
                       <div className="text-[11px] text-gray-400 italic">No bank account linked</div>
                     )}
+
+                    {/* Interactive Referral Link Box */}
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 bg-purple-50/90 p-2.5 rounded-xl border border-purple-200/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-purple-950"
+                    >
+                      <div className="flex items-center gap-2 overflow-hidden w-full sm:w-auto">
+                        <Link2 className="w-4 h-4 text-purple-600 shrink-0" />
+                        <div className="truncate">
+                          <span className="font-extrabold text-purple-900">Referral Link: </span>
+                          <span className="font-mono text-purple-700 font-bold select-all">
+                            {window.location.origin}/?ref={u.invitationCode || u.referralCode || u.phone}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const link = `${window.location.origin}/?ref=${u.invitationCode || u.referralCode || u.phone}`;
+                          navigator.clipboard.writeText(link);
+                          setSuccessMsg(`Referral link for ${u.name || u.phone} copied to clipboard!`);
+                        }}
+                        className="px-2.5 py-1 bg-white hover:bg-purple-100 text-purple-800 font-extrabold text-[11px] rounded-lg border border-purple-300 flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
+                      >
+                        <Copy className="w-3 h-3 text-purple-600" />
+                        <span>Copy Link</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
