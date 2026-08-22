@@ -1002,34 +1002,43 @@ export const AdminPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       <div className="text-[11px] text-gray-400 italic">No bank account linked</div>
                     )}
 
-                    {/* Interactive Referral Link Box */}
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="mt-2 bg-purple-50/90 p-2.5 rounded-xl border border-purple-200/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-purple-950"
-                    >
-                      <div className="flex items-center gap-2 overflow-hidden w-full sm:w-auto">
-                        <Link2 className="w-4 h-4 text-purple-600 shrink-0" />
-                        <div className="truncate">
-                          <span className="font-extrabold text-purple-900">Referral Link: </span>
-                          <span className="font-mono text-purple-700 font-bold select-all">
-                            {window.location.origin}/?ref={u.invitationCode || u.referralCode || u.phone}
-                          </span>
+                    {/* Authentic User Referral Link Card */}
+                    {(() => {
+                      const realCode = u.invitationCode || u.invitation_code || u.referralCode || u.referral_code || u.phone;
+                      const realLink = `${window.location.origin}/?code=${realCode}`;
+                      return (
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          className="mt-2 bg-purple-50/90 p-3 rounded-2xl border border-purple-200/90 space-y-1.5 text-xs text-purple-950"
+                        >
+                          <div className="font-extrabold text-purple-900 flex items-center justify-between gap-2 flex-wrap">
+                            <div className="flex items-center gap-1.5">
+                              <Link2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                              <span>User Authentic Referral Link & Code:</span>
+                            </div>
+                            <span className="bg-purple-200/80 text-purple-900 font-mono font-black text-[11px] px-2 py-0.5 rounded-md">
+                              Code: {realCode}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white p-2 rounded-xl border border-purple-100 font-mono text-[11px]">
+                            <span className="truncate text-purple-800 font-bold select-all">{realLink}</span>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigator.clipboard.writeText(realLink);
+                                setSuccessMsg(`Official referral link for ${u.name || u.phone} (${realCode}) copied to clipboard!`);
+                              }}
+                              className="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-[10px] uppercase rounded-lg shadow-xs flex items-center gap-1 shrink-0 cursor-pointer transition-colors"
+                            >
+                              <Copy className="w-3 h-3" />
+                              <span>Copy Link</span>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const link = `${window.location.origin}/?ref=${u.invitationCode || u.referralCode || u.phone}`;
-                          navigator.clipboard.writeText(link);
-                          setSuccessMsg(`Referral link for ${u.name || u.phone} copied to clipboard!`);
-                        }}
-                        className="px-2.5 py-1 bg-white hover:bg-purple-100 text-purple-800 font-extrabold text-[11px] rounded-lg border border-purple-300 flex items-center gap-1 shrink-0 cursor-pointer shadow-xs transition-colors"
-                      >
-                        <Copy className="w-3 h-3 text-purple-600" />
-                        <span>Copy Link</span>
-                      </button>
-                    </div>
+                      );
+                    })()}
                   </div>
 
                   <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
